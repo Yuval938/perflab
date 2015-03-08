@@ -20,6 +20,9 @@ team_t team = {
 
     "Benjamin Plotke",                  /* Second member full name (leave blank if none) */
     "benplotke@gmail.com"                    /* Second member email addr (leave blank if none) */
+
+    "Ryan Petrosky"                  /*third member*/
+    "petrosr2@students.wwu.edu"
 };
 
 /***************
