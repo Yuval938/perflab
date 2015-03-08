@@ -48,7 +48,6 @@ void naive_rotate(int dim, pixel *src, pixel *dst)
 char rotate1_descr[] = "rotate with loop unrolled once";
 void rotate1(int dim, pixel *src, pixel *dst)
 {
-<<<<<<< HEAD
 	int i, j;
 	
 	for (i = 0; i < dim; i++){
@@ -59,12 +58,6 @@ void rotate1(int dim, pixel *src, pixel *dst)
 		}
 				
 	}	
-=======
-	int i;
-
-	for (i = 0; i< dim; i++)
-		dst[RIDX(dim-1-i, i, dim)] = src[RIDX(i, i, dim)];
->>>>>>> a71d5c92abc10f26f35e93fac35f57ea2ea40231
 }
 
 /*
