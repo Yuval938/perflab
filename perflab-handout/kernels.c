@@ -42,13 +42,19 @@ void naive_rotate(int dim, pixel *src, pixel *dst)
 	for (j = 0; j < dim; j++)
 	    dst[RIDX(dim-1-j, i, dim)] = src[RIDX(i, j, dim)];
 }
-char rotate1_descr[] = "testing rotate with only 1 for";
+char rotate1_descr[] = "rotate with loop unrolled once";
 void rotate1(int dim, pixel *src, pixel *dst)
 {
-	int i;
+	int i, j;
 	
-	for (i = 0; i< dim; i++)
-		dst[RIDX(dim-1-i, i, dim)] = src[RIDX(i, i, dim)];
+	for (i = 0; i < dim; i++){
+		for (j = 0; j < dim; j++){
+			dst[RIDX(dim-1-j, i, dim)] = src[RIDX(i, j, dim)];
+			j++;
+			dst[RIDX(dim-1-j, i, dim)] = src[RIDX(i, j, dim)];
+		}
+				
+	}	
 }
 
 /* 
@@ -58,7 +64,7 @@ void rotate1(int dim, pixel *src, pixel *dst)
 char rotate_descr[] = "rotate: Current working version";
 void rotate(int dim, pixel *src, pixel *dst) 
 {
-    rotate1(dim, src, dst);
+    naive_rotate(dim, src, dst);
 }
 
 /*********************************************************************
