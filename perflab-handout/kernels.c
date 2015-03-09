@@ -59,10 +59,10 @@ void rotate1(int dim, pixel *src, pixel *dst)
 				
 	}	
 }
-char rotate2_descr[] = "rotate 32 pixel squares at a time to not improve cach hits";
+char rotate2_descr[] = "rotate 16 pixel squares at a time to not improve cach hits";
 void rotate2(int dim, pixel *src, pixel *dst) {
 	int outerColumn, outerRow, innerColumn, innerRow;
-	int cachLim = 32;
+	int cachLim = 16;
 	for ( outerRow = 0; outerRow < dim; outerRow += cachLim ) {
 		for ( outerColumn = 0; outerColumn < dim; outerColumn += cachLim ) {
 			int innerRowLim = outerRow + cachLim;
@@ -75,6 +75,31 @@ void rotate2(int dim, pixel *src, pixel *dst) {
 		}
 	}
 }
+
+char rotate3_descr[] = "rotate 2x2 blocks of 16x16 pixel blocks at a time to not improve cach hits";
+void rotate3(int dim, pixel *src, pixel *dst) {
+	int blockColumn, blockRow, outerColumn, outerRow, innerColumn, innerRow;
+	int cachLim = 16;
+	int cachLim2 = 32;
+	for ( blockRow = 0; blockRow < dim; blockRow += cachLim2 ) {
+		for ( blockColumn = 0; blockColumn < dim; blockColumn += cachLim2 ) {
+			int outerRowLim = blockRow + cachLim2;
+			for ( outerRow = blockRow; outerRow < outerRowLim; outerRow += cachLim ) {
+				int outerColumnLim = blockColumn + cachLim2;
+				for ( outerColumn = 0; outerColumn < outerColumnLim; outerColumn += cachLim ) {
+					int innerRowLim = outerRow + cachLim;
+					for ( innerRow = outerRow; innerRow < innerRowLim; innerRow += 1 ) {
+						int innerColumnLim = outerColumn + cachLim;
+						for ( innerColumn = outerColumn; innerColumn < innerColumnLim; innerColumn += 1 ) {
+							dst[RIDX(dim-1-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn, dim)];
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 
 /*
  * rotate - Your current working version of rotate
@@ -97,9 +122,10 @@ void rotate(int dim, pixel *src, pixel *dst)
 void register_rotate_functions()
 {
     add_rotate_function(&naive_rotate, naive_rotate_descr);
-    add_rotate_function(&rotate, rotate_descr);
+    //add_rotate_function(&rotate, rotate_descr);
     add_rotate_function(&rotate1, rotate1_descr);
 	add_rotate_function(&rotate2, rotate2_descr);
+	add_rotate_function(&rotate3, rotate3_descr);
 	/* ... Register additional test functions here */
 }
 
