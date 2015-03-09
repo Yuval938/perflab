@@ -59,6 +59,22 @@ void rotate1(int dim, pixel *src, pixel *dst)
 				
 	}	
 }
+char rotate2_descr[] = "rotate 32 pixel squares at a time to not improve cach hits";
+void rotate2(int dim, pixel *src, pixel *dst) {
+	int outerColumn, outerRow, innerColumn, innerRow;
+	int cachLim = 32;
+	for ( outerRow = 0; outerRow < dim; outerRow += cachLim ) {
+		for ( outerColumn = 0; outerColumn < dim; outerColumn += cachLim ) {
+			int innerRowLim = outerRow + cachLim;
+			for ( innerRow = outerRow; innerRow < innerRowLim; innerRow += 1 ) {
+				int innerColumnLim = outerColumn + cachLim;
+				for ( innerColumn = outerColumn; innerColumn < innerColumnLim; innerColumn += 1 ) {
+					dst[RIDX(dim-1-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn, dim)];
+				}
+			}
+		}
+	}
+}
 
 /*
  * rotate - Your current working version of rotate
@@ -83,6 +99,7 @@ void register_rotate_functions()
     add_rotate_function(&naive_rotate, naive_rotate_descr);
     add_rotate_function(&rotate, rotate_descr);
     add_rotate_function(&rotate1, rotate1_descr);
+	add_rotate_function(&rotate2, rotate2_descr);
 	/* ... Register additional test functions here */
 }
 
