@@ -177,7 +177,7 @@ void rotate6(int dim, pixel *src, pixel *dst) {
     }
   }*/
 
-  int outerColumn, outerRow, innerColumn, innerRow, innerRowLim, innerColumnLim, x;
+  int outerColumn, outerRow, innerColumn, innerRow, innerRowLim, innerColumnLim, x, y;
   int cachLim = 32;
   for( outerRow = 0; outerRow < dim; outerRow += cachLim ) {
     for( outerColumn = 0; outerColumn < dim; outerColumn += cachLim ) {
@@ -188,13 +188,18 @@ void rotate6(int dim, pixel *src, pixel *dst) {
 	//int innerColumnLim = outerColumn + cachLim;
 	innerRowLim = outerRow + cachLim;
 	x = RIDX(dim-1-innerColumn, outerRow, dim);
-	for( innerRow = outerRow; innerRow < innerRowLim; innerRow += 4 ) {
+	y = RIDX(outerRow, innerColumn, dim);
+	for( innerRow = outerRow; innerRow < innerRowLim; innerRow += 2 ) {
    //for ( innerColumn = outerColumn; innerColumn < innerColumnLim; innerColumn += 1 ) {
-	  dst[x] = src[RIDX(innerRow, innerColumn, dim)];
-	  dst[x+1] = src[RIDX(innerRow+1, innerColumn, dim)];
-	  dst[x+2] = src[RIDX(innerRow+2, innerColumn, dim)];
-	  dst[x+3] = src[RIDX(innerRow+3, innerColumn, dim)];
-	  x+=4;
+	  dst[x++] = src[y];// src[RIDX(innerRow, innerColumn, dim)];
+	  y+=dim;
+	  dst[x++] = src[y];//src[RIDX(innerRow+1, innerColumn, dim)];
+	  y+=dim;
+	  //dst[x++] = src[y];//src[RIDX(innerRow+2, innerColumn, dim)];
+	  //y+=dim;
+	  //dst[x++] = src[y];//src[RIDX(innerRow+3, innerColumn, dim)];
+	  //y+=dim;
+	  //x+=4;
 	}
       }
     }
