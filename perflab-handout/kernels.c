@@ -163,7 +163,7 @@ void rotate5(int dim, pixel *src, pixel *dst) {
   }
 }
 
-char rotate6_descr[] = "16 pixel blocks, code motion on RIDX";
+char rotate6_descr[] = "32 pixel blocks, code motion on RIDX, unroll inner loop by 4";
 void rotate6(int dim, pixel *src, pixel *dst) {
 
   /*  int i, j, x, y;
@@ -177,8 +177,8 @@ void rotate6(int dim, pixel *src, pixel *dst) {
     }
   }*/
 
-  int outerColumn, outerRow, innerColumn, innerRow, innerRowLim, innerColumnLim;
-  int cachLim = 16;
+  int outerColumn, outerRow, innerColumn, innerRow, innerRowLim, innerColumnLim, x;
+  int cachLim = 32;
   for( outerRow = 0; outerRow < dim; outerRow += cachLim ) {
     for( outerColumn = 0; outerColumn < dim; outerColumn += cachLim ) {
       //int innerRowLim = outerRow + cachLim;
@@ -187,9 +187,14 @@ void rotate6(int dim, pixel *src, pixel *dst) {
   //for ( innerRow = outerRow; innerRow < innerRowLim; innerRow += 1 ) {
 	//int innerColumnLim = outerColumn + cachLim;
 	innerRowLim = outerRow + cachLim;
-	for( innerRow = outerRow; innerRow < innerRowLim; innerRow += 1 ) {
+	x = RIDX(dim-1-innerColumn, outerRow, dim);
+	for( innerRow = outerRow; innerRow < innerRowLim; innerRow += 4 ) {
    //for ( innerColumn = outerColumn; innerColumn < innerColumnLim; innerColumn += 1 ) {
-	  dst[RIDX(dim-1-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn, dim)];
+	  dst[x] = src[RIDX(innerRow, innerColumn, dim)];
+	  dst[x+1] = src[RIDX(innerRow+1, innerColumn, dim)];
+	  dst[x+2] = src[RIDX(innerRow+2, innerColumn, dim)];
+	  dst[x+3] = src[RIDX(innerRow+3, innerColumn, dim)];
+	  x+=4;
 	}
       }
     }
