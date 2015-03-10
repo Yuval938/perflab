@@ -100,6 +100,102 @@ void rotate3(int dim, pixel *src, pixel *dst) {
 	}
 }
 
+char rotate4_descr[] = "modified rotate 16 pixel squares at a time to not improve cach hits";
+void rotate4(int dim, pixel *src, pixel *dst) {
+  int outerColumn, outerRow, innerColumn, innerRow;//,innerRowLim, innerColumnLim;
+  int cachLim = 8;
+  //pixel *d;
+  for ( outerRow = 0; outerRow < dim; outerRow += cachLim ) {
+    for ( outerColumn = 0; outerColumn < dim; outerColumn += cachLim ) {
+      int innerRowLim = outerRow + cachLim;
+      for ( innerRow = outerRow; innerRow < innerRowLim; innerRow += 1 ) {
+	int innerColumnLim = outerColumn + cachLim;
+	//d = &dst[RIDX(outerRow,dim-1,dim)];
+	for ( innerColumn = outerColumn; innerColumn < innerColumnLim; innerColumn += 1 ) { 
+	  //*d = src[RIDX(innerRow, innerColumn, dim)];
+	  //d = d - (dim-1);
+	  //*d = src[RIDX(innerRow, innerColumn+1, dim)];
+	  //d = d - (dim-1);
+	  //dst[RIDX(dim-1-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn, dim)];
+	  //dst[RIDX(dim-2-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn+1, dim)];
+	  //dst[RIDX(dim-3-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn+2, dim)];
+	  //dst[RIDX(dim-4-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn+3, dim)];
+	  //dst[RIDX(dim-5-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn+4, dim)];
+	  //dst[RIDX(dim-6-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn+5, dim)];
+	  //dst[RIDX(dim-7-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn+6, dim)];
+	  //dst[RIDX(dim-8-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn+7, dim)];
+	  //dst[RIDX(dim-9-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn+8, dim)];
+	  //dst[RIDX(dim-10-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn+9, dim)];
+	  //dst[RIDX(dim-11-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn+10, dim)];
+	  //dst[RIDX(dim-12-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn+11, dim)];
+	  //dst[RIDX(dim-13-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn+12, dim)];
+	  //dst[RIDX(dim-14-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn+13, dim)];
+	  //dst[RIDX(dim-15-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn+14, dim)];
+	  //dst[RIDX(dim-16-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn+15, dim)];
+	}
+      }
+    }
+  }
+}
+
+
+char rotate5_descr[] = "modified rotate, block moves down before moving right";
+void rotate5(int dim, pixel *src, pixel *dst) {
+  int outerColumn, outerRow, innerColumn, innerRow, x;//,y;//,innerRowLim, innerColumnLim;
+  int cachLim = 16;
+  //pixel *d;
+  //for ( outerRow = 0; outerRow < dim; outerRow += cachLim ) {
+    for ( outerColumn = 0; outerColumn < dim; outerColumn += cachLim ) {
+      for(outerRow = 0; outerRow < dim; outerRow += cachLim ) {
+	//int innerRowLim = outerRow + cachLim;
+	
+      for ( innerRow = outerRow; innerRow < outerRow+cachLim; innerRow += 1 ) {
+	//int innerColumnLim = outerColumn + cachLim;
+	x = RIDX(innerRow, outerColumn, dim);
+      	//y = RIDX(outerColumn, innerRow, dim);
+	for ( innerColumn = outerColumn; innerColumn < outerColumn+cachLim; innerColumn += 2 ) { 
+	  dst[RIDX(dim-1-innerColumn, innerRow, dim)] = src[x+innerColumn];
+	  dst[RIDX(dim-1-innerColumn-1, innerRow, dim)] = src[x+innerColumn+1];
+
+	}
+      }
+    }
+  }
+}
+
+char rotate6_descr[] = "16 pixel blocks, code motion on RIDX";
+void rotate6(int dim, pixel *src, pixel *dst) {
+
+  /*  int i, j, x, y;
+  x = RIDX(0, 0, dim);
+  for (i = 0; i < dim; i++) {
+    y = RIDX(dim-1,i,dim);
+    for (j = 0; j < dim; j++) {
+      dst[y] = src[x];
+      y -= dim;
+      x += 1;
+    }
+  }*/
+
+  int outerColumn, outerRow, innerColumn, innerRow, innerRowLim, innerColumnLim;
+  int cachLim = 16;
+  for( outerRow = 0; outerRow < dim; outerRow += cachLim ) {
+    for( outerColumn = 0; outerColumn < dim; outerColumn += cachLim ) {
+      //int innerRowLim = outerRow + cachLim;
+      innerColumnLim = outerColumn + cachLim;
+      for( innerColumn = outerColumn; innerColumn < innerColumnLim; innerColumn += 1 ) {
+  //for ( innerRow = outerRow; innerRow < innerRowLim; innerRow += 1 ) {
+	//int innerColumnLim = outerColumn + cachLim;
+	innerRowLim = outerRow + cachLim;
+	for( innerRow = outerRow; innerRow < innerRowLim; innerRow += 1 ) {
+   //for ( innerColumn = outerColumn; innerColumn < innerColumnLim; innerColumn += 1 ) {
+	  dst[RIDX(dim-1-innerColumn, innerRow, dim)] = src[RIDX(innerRow, innerColumn, dim)];
+	}
+      }
+    }
+  }
+}  
+
 
 /*
  * rotate - Your current working version of rotate
@@ -123,9 +219,12 @@ void register_rotate_functions()
 {
     add_rotate_function(&naive_rotate, naive_rotate_descr);
     //add_rotate_function(&rotate, rotate_descr);
-    add_rotate_function(&rotate1, rotate1_descr);
-	add_rotate_function(&rotate2, rotate2_descr);
-	add_rotate_function(&rotate3, rotate3_descr);
+    //add_rotate_function(&rotate1, rotate1_descr);
+    add_rotate_function(&rotate2, rotate2_descr);
+	//add_rotate_function(&rotate3, rotate3_descr);
+	//add_rotate_function(&rotate4, rotate4_descr);
+	//add_rotate_function(&rotate5, rotate5_descr);
+    add_rotate_function(&rotate6, rotate6_descr);
 	/* ... Register additional test functions here */
 }
 
