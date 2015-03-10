@@ -128,7 +128,7 @@ void rotate4(int dim, pixel *src, pixel *dst) {
 char rotate_descr[] = "rotate: Current working version";
 void rotate(int dim, pixel *src, pixel *dst)
 {
-    rotate3(dim, src, dst);
+    rotate4(dim, src, dst);
 }
 
 /*********************************************************************
