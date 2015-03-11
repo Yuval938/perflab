@@ -332,8 +332,11 @@ void naive_smooth(int dim, pixel *src, pixel *dst)
 void sm1(int dim, pixel *src, pixel *dst) {
 
   int i, j;//, x, y, z;
-    
+  //pixel *s = s;
+  //pixel *d = d;
+  
   //hardcode value for(0,0) top left corner
+  //d->red = s->red + (s++)->red;
   dst[0].red = (src[0].red + src[1].red + src[dim].red + src[dim+1].red)/4;
   dst[0].green = (src[0].green + src[1].green + src[dim].green + src[dim+1].green)/4;
   dst[0].blue = (src[0].blue + src[1].blue + src[dim].blue + src[dim+1].blue)/4;
@@ -399,6 +402,17 @@ void sm1(int dim, pixel *src, pixel *dst) {
 }
 
 
+
+void sm2(int dim, pixel *src, pixel *dst) {
+
+  //  int i, j;
+
+  dst->red = src->red + (src++)->red;
+  
+
+}//----------------- end sm2 ----------------------
+
+
 /*
  * smooth - Your current working version of smooth.
  * IMPORTANT: This is the version you will be graded on
@@ -422,6 +436,7 @@ void register_smooth_functions() {
     add_smooth_function(&smooth, smooth_descr);
     add_smooth_function(&naive_smooth, naive_smooth_descr);
     add_smooth_function(&sm1, "getting rid of all function calls");
+    //add_smooth_function(&sm2, "bad version");
     /* ... Register additional test functions here */
 }
 
