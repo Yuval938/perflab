@@ -446,47 +446,48 @@ void sm2(int dim, pixel *src, pixel *dst) {
   //loop for inner pixels, watch out for edge cases
 
 
-  /*  
+  /*
   //loop (1,0) to (dim-2,dim-2), watch out for edge cases
   for(i = 1; i < dim-1; i++) {
-    //    x = RIDX(i-1,1,dim);
-    //    y = RIDX(i,1,dim);
-    //   z = RIDX(i+1,1,dim);
+    x = RIDX(i-1,0,dim);
+    y = RIDX(i,0,dim);
+    z = RIDX(i+1,0,dim);
     for(j = 0; j < dim; j++) {
-      if( j == 0 ) {
-	dst[RIDX(i,j,dim)].red = (src[RIDX(i-1,j,dim)].red + src[RIDX(i-1,j+1,dim)].red + src[RIDX(i,j,dim)].red + src[RIDX(i,j+1,dim)].red + src[RIDX(i+1,j,dim)].red + src[RIDX(i+1,j+1,dim)].red)/6;
-	dst[RIDX(i,j,dim)].green = (src[RIDX(i-1,j,dim)].green + src[RIDX(i-1,j+1,dim)].green + src[RIDX(i,j,dim)].green + src[RIDX(i,j+1,dim)].green + src[RIDX(i+1,j,dim)].green + src[RIDX(i+1,j+1,dim)].green)/6;
-	dst[RIDX(i,j,dim)].blue = (src[RIDX(i-1,j,dim)].blue +  src[RIDX(i-1,j+1,dim)].blue + src[RIDX(i,j,dim)].blue + src[RIDX(i,j+1,dim)].blue + src[RIDX(i+1,j,dim)].blue + src[RIDX(i+1,j+1,dim)].blue)/6;
-      }
-      else if( j == dim-1 ) {
-	dst[RIDX(i,j,dim)].red = (src[RIDX(i,j-1,dim)].red + src[RIDX(i,j,dim)].red + src[RIDX(i-1,j-1,dim)].red + src[RIDX(i-1,j,dim)].red + src[RIDX(i+1,j-1,dim)].red + src[RIDX(i+1,j,dim)].red)/6;
-	dst[RIDX(i,j,dim)].green = (src[RIDX(i,j-1,dim)].green + src[RIDX(i,j,dim)].green + src[RIDX(i-1,j-1,dim)].green + src[RIDX(i-1,j,dim)].green + src[RIDX(i+1,j-1,dim)].green + src[RIDX(i+1,j,dim)].green)/6;
-	dst[RIDX(i,j,dim)].blue = (src[RIDX(i,j-1,dim)].blue + src[RIDX(i,j,dim)].blue + src[RIDX(i-1,j-1,dim)].blue + src[RIDX(i-1,j,dim)].blue + src[RIDX(i+1,j-1,dim)].blue + src[RIDX(i+1,j,dim)].blue)/6;	
-      }
-      else {
-	//	dst[y].red = (src[x-1].red + src[x].red + src[x+1].red + src[y-1].red + src[y].red + src[y+1].red + src[z-1].red + src[z].red + src[z+1].red)/9;
-	
-	dst[RIDX(i,j,dim)].red = (src[RIDX(i,j-1,dim)].red + src[RIDX(i,j,dim)].red + src[RIDX(i,j+1,dim)].red + src[RIDX(i-1,j-1,dim)].red + src[RIDX(i-1,j,dim)].red + src[RIDX(i-1,j+1,dim)].red + src[RIDX(i+1,j-1,dim)].red + src[RIDX(i+1,j,dim)].red + src[RIDX(i+1,j+1,dim)].red)/9;
-	dst[RIDX(i,j,dim)].green = (src[RIDX(i,j-1,dim)].green + src[RIDX(i,j,dim)].green + src[RIDX(i,j+1,dim)].green + src[RIDX(i-1,j-1,dim)].green + src[RIDX(i-1,j,dim)].green + src[RIDX(i-1,j+1,dim)].green + src[RIDX(i+1,j-1,dim)].green + src[RIDX(i+1,j,dim)].green + src[RIDX(i+1,j+1,dim)].green)/9;
-	dst[RIDX(i,j,dim)].blue = (src[RIDX(i,j-1,dim)].blue + src[RIDX(i,j,dim)].blue + src[RIDX(i,j+1,dim)].blue + src[RIDX(i-1,j-1,dim)].blue + src[RIDX(i-1,j,dim)].blue + src[RIDX(i-1,j+1,dim)].blue + src[RIDX(i+1,j-1,dim)].blue + src[RIDX(i+1,j,dim)].blue + src[RIDX(i+1,j+1,dim)].blue)/9;
-	//	y++;
-	//	x++;
-	//	z++;
-      }
+  	if( j == 0 ) {
+	    dst[y].red = (src[x].red + src[x+1].red + src[y].red + src[y+1].red + src[z].red + src[z+1].red)/6;		
+	    dst[y].green = (src[x].green + src[x+1].green + src[y].green + src[y+1].green + src[z].green + src[z+1].green)/6;
+	    dst[y].blue = (src[x].blue + src[x+1].blue + src[y].blue + src[y+1].blue + src[z].blue + src[z+1].blue)/6;	
+	}
+	else if( j == dim-1 ) {
+	    dst[y].red = (src[x].red + src[x-1].red + src[y].red + src[y-1].red + src[z].red + src[z-1].red)/6;		
+	    dst[y].green = (src[x].green + src[x-1].green + src[y].green + src[y-1].green + src[z].green + src[z-1].green)/6;
+	    dst[y].blue = (src[x].blue + src[x-1].blue + src[y].blue + src[y-1].blue + src[z].blue + src[z-1].blue)/6;	
+	}
+	else {
+	    dst[y].red = (src[x-1].red + src[x].red + src[x+1].red + src[y-1].red + src[y].red + src[y+1].red + src[z-1].red + src[z].red + src[z+1].red)/9;
+	    dst[y].green = (src[x-1].green + src[x].green + src[x+1].green + src[y-1].green + src[y].green + src[y+1].green + src[z-1].green + src[z].green + src[z+1].green)/9;
+	    dst[y].blue = (src[x-1].blue + src[x].blue + src[x+1].blue + src[y-1].blue + src[y].blue + src[y+1].blue + src[z-1].blue + src[z].blue + src[z+1].blue)/9;
+	}
+	y++;
+	x++;
+	z++;
     }
-  }
-
+}
   //hardcode value for (dim-1,0) bottom left corner
   dst[RIDX(dim-1,0,dim)].red = (src[RIDX(dim-1,0,dim)].red + src[RIDX(dim-1,1,dim)].red + src[RIDX(dim-2,0,dim)].red + src[RIDX(dim-2,1,dim)].red)/4;
   dst[RIDX(dim-1,0,dim)].green = (src[RIDX(dim-1,0,dim)].green + src[RIDX(dim-1,1,dim)].green + src[RIDX(dim-2,0,dim)].green + src[RIDX(dim-2,1,dim)].green)/4;
   dst[RIDX(dim-1,0,dim)].blue = (src[RIDX(dim-1,0,dim)].blue + src[RIDX(dim-1,1,dim)].blue + src[RIDX(dim-2,0,dim)].blue + src[RIDX(dim-2,1,dim)].blue)/4;
 
   //loop (dim-1,1) to (dim-1,dim-2) bottom row
+  x = RIDX(dim-2,1,dim);
+  y = RIDX(dim-1,1,dim);
   for(i = 1; i < dim - 1; i++) {
-    dst[RIDX(dim-1,i,dim)].red = (src[RIDX(dim-1,i-1,dim)].red + src[RIDX(dim-1,i,dim)].red + src[RIDX(dim-1,i+1,dim)].red + src[RIDX(dim-2,i-1,dim)].red + src[RIDX(dim-2,i,dim)].red + src[RIDX(dim-2,i+1,dim)].red)/6;
-    dst[RIDX(dim-1,i,dim)].green = (src[RIDX(dim-1,i-1,dim)].green + src[RIDX(dim-1,i,dim)].green + src[RIDX(dim-1,i+1,dim)].green + src[RIDX(dim-2,i-1,dim)].green + src[RIDX(dim-2,i,dim)].green + src[RIDX(dim-2,i+1,dim)].green)/6;
-    dst[RIDX(dim-1,i,dim)].blue = (src[RIDX(dim-1,i-1,dim)].blue + src[RIDX(dim-1,i,dim)].blue + src[RIDX(dim-1,i+1,dim)].blue + src[RIDX(dim-2,i-1,dim)].blue + src[RIDX(dim-2,i,dim)].blue + src[RIDX(dim-2,i+1,dim)].blue)/6;
-  }
+    dst[y].red = (src[x-1].red + src[x].red + src[x+1].red + src[y-1].red + src[y].red + src[y+1].red)/6;
+    dst[y].green = (src[x-1].green + src[x].green + src[x+1].green + src[y-1].green + src[y].green + src[y+1].green)/6;
+    dst[y].blue = (src[x-1].blue + src[x].blue + src[x+1].blue + src[y-1].blue + src[y].blue + src[y+1].blue)/6;
+    x++;
+    y++;
+}
 
   //hardcode for (dim-1, dim-1) bottom right corner
   dst[RIDX(dim-1,dim-1,dim)].red = (src[RIDX(dim-1,dim-1,dim)].red + src[RIDX(dim-1,dim-2,dim)].red + src[RIDX(dim-2,dim-2,dim)].red + src[RIDX(dim-2,dim-1,dim)].red)/4;
