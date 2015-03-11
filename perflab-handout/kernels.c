@@ -23,6 +23,9 @@ team_t team = {
 
     "Ryan Petrosky"                  /*third member*/
     "petrosr2@students.wwu.edu"
+    	
+    "Joseph Renner"                  /*fourth member*/
+    "rennerj2@students.wwu.edu"
 };
 
 /***************
