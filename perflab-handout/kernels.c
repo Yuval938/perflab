@@ -405,10 +405,92 @@ void sm1(int dim, pixel *src, pixel *dst) {
 
 void sm2(int dim, pixel *src, pixel *dst) {
 
-  //  int i, j;
 
-  dst->red = src->red + (src++)->red;
+  int i;//, j;
+  pixel *s1 = src;
+  pixel *s2 = src + dim;
+  pixel *s3;
+  pixel *d = dst;
   
+  //hardcode for top left corner
+  d->red = (s1->red + (s1+1)->red + s2->red + (s2+1)->red) / 4;
+  d->blue = (s1->blue + (s1+1)->blue + s2->blue + (s2+1)->blue) / 4;
+  d->green = (s1->green + (s1+1)->green + s2->green + (s2+1)->green) / 4;
+
+  d++;
+  s1++;
+  s2++;
+
+  //top row
+  for( i = 1; i < dim - 1; i++ ) {
+    d->red = ((s1-1)->red + (s1)->red + (s1+1)->red + (s2-1)->red + (s2)->red + (s2+1)->red) / 6;
+    d->green = ((s1-1)->green + (s1)->green + (s1+1)->green + (s2-1)->green + (s2)->green + (s2+1)->green) / 6;
+    d->blue = ((s1-1)->blue + (s1)->blue + (s1+1)->blue + (s2-1)->blue + (s2)->blue + (s2+1)->blue) / 6;
+    s1++;
+    s2++;
+    d++;
+  }
+
+  //hardcode for top right corner
+  d->red = ((s1-1)->red + (s1)->red + (s2-1)->red + (s2)->red) / 4;
+  d->blue = ((s1-1)->blue + (s1)->blue + (s2-1)->blue + (s2)->blue) / 4;
+  d->green = ((s1-1)->green + (s1)->green + (s2-1)->green + (s2)->green) / 4;
+
+  d++;
+  s1++;
+  s2++;
+  s3 = s2 + dim;
+
+  //loop for inner pixels, watch out for edge cases
+
+
+  /*  
+  //loop (1,0) to (dim-2,dim-2), watch out for edge cases
+  for(i = 1; i < dim-1; i++) {
+    //    x = RIDX(i-1,1,dim);
+    //    y = RIDX(i,1,dim);
+    //   z = RIDX(i+1,1,dim);
+    for(j = 0; j < dim; j++) {
+      if( j == 0 ) {
+	dst[RIDX(i,j,dim)].red = (src[RIDX(i-1,j,dim)].red + src[RIDX(i-1,j+1,dim)].red + src[RIDX(i,j,dim)].red + src[RIDX(i,j+1,dim)].red + src[RIDX(i+1,j,dim)].red + src[RIDX(i+1,j+1,dim)].red)/6;
+	dst[RIDX(i,j,dim)].green = (src[RIDX(i-1,j,dim)].green + src[RIDX(i-1,j+1,dim)].green + src[RIDX(i,j,dim)].green + src[RIDX(i,j+1,dim)].green + src[RIDX(i+1,j,dim)].green + src[RIDX(i+1,j+1,dim)].green)/6;
+	dst[RIDX(i,j,dim)].blue = (src[RIDX(i-1,j,dim)].blue +  src[RIDX(i-1,j+1,dim)].blue + src[RIDX(i,j,dim)].blue + src[RIDX(i,j+1,dim)].blue + src[RIDX(i+1,j,dim)].blue + src[RIDX(i+1,j+1,dim)].blue)/6;
+      }
+      else if( j == dim-1 ) {
+	dst[RIDX(i,j,dim)].red = (src[RIDX(i,j-1,dim)].red + src[RIDX(i,j,dim)].red + src[RIDX(i-1,j-1,dim)].red + src[RIDX(i-1,j,dim)].red + src[RIDX(i+1,j-1,dim)].red + src[RIDX(i+1,j,dim)].red)/6;
+	dst[RIDX(i,j,dim)].green = (src[RIDX(i,j-1,dim)].green + src[RIDX(i,j,dim)].green + src[RIDX(i-1,j-1,dim)].green + src[RIDX(i-1,j,dim)].green + src[RIDX(i+1,j-1,dim)].green + src[RIDX(i+1,j,dim)].green)/6;
+	dst[RIDX(i,j,dim)].blue = (src[RIDX(i,j-1,dim)].blue + src[RIDX(i,j,dim)].blue + src[RIDX(i-1,j-1,dim)].blue + src[RIDX(i-1,j,dim)].blue + src[RIDX(i+1,j-1,dim)].blue + src[RIDX(i+1,j,dim)].blue)/6;	
+      }
+      else {
+	//	dst[y].red = (src[x-1].red + src[x].red + src[x+1].red + src[y-1].red + src[y].red + src[y+1].red + src[z-1].red + src[z].red + src[z+1].red)/9;
+	
+	dst[RIDX(i,j,dim)].red = (src[RIDX(i,j-1,dim)].red + src[RIDX(i,j,dim)].red + src[RIDX(i,j+1,dim)].red + src[RIDX(i-1,j-1,dim)].red + src[RIDX(i-1,j,dim)].red + src[RIDX(i-1,j+1,dim)].red + src[RIDX(i+1,j-1,dim)].red + src[RIDX(i+1,j,dim)].red + src[RIDX(i+1,j+1,dim)].red)/9;
+	dst[RIDX(i,j,dim)].green = (src[RIDX(i,j-1,dim)].green + src[RIDX(i,j,dim)].green + src[RIDX(i,j+1,dim)].green + src[RIDX(i-1,j-1,dim)].green + src[RIDX(i-1,j,dim)].green + src[RIDX(i-1,j+1,dim)].green + src[RIDX(i+1,j-1,dim)].green + src[RIDX(i+1,j,dim)].green + src[RIDX(i+1,j+1,dim)].green)/9;
+	dst[RIDX(i,j,dim)].blue = (src[RIDX(i,j-1,dim)].blue + src[RIDX(i,j,dim)].blue + src[RIDX(i,j+1,dim)].blue + src[RIDX(i-1,j-1,dim)].blue + src[RIDX(i-1,j,dim)].blue + src[RIDX(i-1,j+1,dim)].blue + src[RIDX(i+1,j-1,dim)].blue + src[RIDX(i+1,j,dim)].blue + src[RIDX(i+1,j+1,dim)].blue)/9;
+	//	y++;
+	//	x++;
+	//	z++;
+      }
+    }
+  }
+
+  //hardcode value for (dim-1,0) bottom left corner
+  dst[RIDX(dim-1,0,dim)].red = (src[RIDX(dim-1,0,dim)].red + src[RIDX(dim-1,1,dim)].red + src[RIDX(dim-2,0,dim)].red + src[RIDX(dim-2,1,dim)].red)/4;
+  dst[RIDX(dim-1,0,dim)].green = (src[RIDX(dim-1,0,dim)].green + src[RIDX(dim-1,1,dim)].green + src[RIDX(dim-2,0,dim)].green + src[RIDX(dim-2,1,dim)].green)/4;
+  dst[RIDX(dim-1,0,dim)].blue = (src[RIDX(dim-1,0,dim)].blue + src[RIDX(dim-1,1,dim)].blue + src[RIDX(dim-2,0,dim)].blue + src[RIDX(dim-2,1,dim)].blue)/4;
+
+  //loop (dim-1,1) to (dim-1,dim-2) bottom row
+  for(i = 1; i < dim - 1; i++) {
+    dst[RIDX(dim-1,i,dim)].red = (src[RIDX(dim-1,i-1,dim)].red + src[RIDX(dim-1,i,dim)].red + src[RIDX(dim-1,i+1,dim)].red + src[RIDX(dim-2,i-1,dim)].red + src[RIDX(dim-2,i,dim)].red + src[RIDX(dim-2,i+1,dim)].red)/6;
+    dst[RIDX(dim-1,i,dim)].green = (src[RIDX(dim-1,i-1,dim)].green + src[RIDX(dim-1,i,dim)].green + src[RIDX(dim-1,i+1,dim)].green + src[RIDX(dim-2,i-1,dim)].green + src[RIDX(dim-2,i,dim)].green + src[RIDX(dim-2,i+1,dim)].green)/6;
+    dst[RIDX(dim-1,i,dim)].blue = (src[RIDX(dim-1,i-1,dim)].blue + src[RIDX(dim-1,i,dim)].blue + src[RIDX(dim-1,i+1,dim)].blue + src[RIDX(dim-2,i-1,dim)].blue + src[RIDX(dim-2,i,dim)].blue + src[RIDX(dim-2,i+1,dim)].blue)/6;
+  }
+
+  //hardcode for (dim-1, dim-1) bottom right corner
+  dst[RIDX(dim-1,dim-1,dim)].red = (src[RIDX(dim-1,dim-1,dim)].red + src[RIDX(dim-1,dim-2,dim)].red + src[RIDX(dim-2,dim-2,dim)].red + src[RIDX(dim-2,dim-1,dim)].red)/4;
+  dst[RIDX(dim-1,dim-1,dim)].green = (src[RIDX(dim-1,dim-1,dim)].green + src[RIDX(dim-1,dim-2,dim)].green + src[RIDX(dim-2,dim-2,dim)].green + src[RIDX(dim-2,dim-1,dim)].green)/4;
+  dst[RIDX(dim-1,dim-1,dim)].blue = (src[RIDX(dim-1,dim-1,dim)].blue + src[RIDX(dim-1,dim-2,dim)].blue + src[RIDX(dim-2,dim-2,dim)].blue + src[RIDX(dim-2,dim-1,dim)].blue)/4;
+  */ 
 
 }//----------------- end sm2 ----------------------
 
@@ -436,7 +518,7 @@ void register_smooth_functions() {
     add_smooth_function(&smooth, smooth_descr);
     add_smooth_function(&naive_smooth, naive_smooth_descr);
     add_smooth_function(&sm1, "getting rid of all function calls");
-    //add_smooth_function(&sm2, "bad version");
+    add_smooth_function(&sm2, "modified version, taking RIDX out");
     /* ... Register additional test functions here */
 }
 
