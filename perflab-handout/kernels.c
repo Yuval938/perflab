@@ -505,7 +505,7 @@ void sm2(int dim, pixel *src, pixel *dst) {
 char smooth_descr[] = "smooth: Current working version";
 void smooth(int dim, pixel *src, pixel *dst)
 {
-    naive_smooth(dim, src, dst);
+    sm1(dim, src, dst);
 }
 
 
